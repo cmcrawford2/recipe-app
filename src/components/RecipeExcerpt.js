@@ -1,14 +1,16 @@
 import React from "react";
 
-export default function RecipeExcerpt({ title, description, image_url }) {
+export default function RecipeExcerpt(props) {
+  const { recipe, handleSelectRecipe } = props;
+
   return (
     <article className="recipe-card">
       <figure>
-        <img src={image_url} alt={`Picture of ${title}`} />
+        <img src={recipe.image_url} alt={recipe.title} />
       </figure>
-      <h2>{title}</h2>
-      <p className="flex-spacing">{`Description: ${description}`}</p>
-      <button>View</button>
+      <h2>{recipe.title}</h2>
+      <p className="flex-spacing">{`Description: ${recipe.description}`}</p>
+      <button onClick={() => handleSelectRecipe(recipe)}>View</button>
     </article>
   );
 }
@@ -20,4 +22,6 @@ recipe.ingredients = data['ingredients']
 recipe.instructions = data['instructions']
 recipe.servings = data['servings']
 recipe.description = data['description']
-recipe.image_url = data['image_url']*/
+recipe.image_url = data['image_url']
+
+In the RecipeExcerpt component, destructure handleSelectRecipe and pass it as an onClick event listener to the “View” button. Remember that we need to give handleSelectRecipe an argument! Lucky for us, recipe is already being passed down to RecipeExcerpt as a prop.*/
