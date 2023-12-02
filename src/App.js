@@ -9,34 +9,71 @@ import "./App.css";
 function App() {
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [showNewRecipeForm, setShowNewRecipeForm] = useState(false);
   const [newRecipe, setNewRecipe] = useState({
     title: "",
     ingredients: "",
     instructions: "",
-    servings: 1, // conservative default
+    servings: 1,
     description: "",
     image_url:
-      "https://images.pexels.com/photos/9986228/pexels-photo-9986228.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", //default
+      "https://images.pexels.com/photos/9986228/pexels-photo-9986228.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   });
-  const [showNewRecipeForm, setShowNewRecipeForm] = useState(false);
 
   useEffect(() => {
-    async function fetchAllRecipes() {
+    const fetchAllRecipes = async () => {
       try {
         const response = await fetch("/api/recipes");
         if (response.ok) {
           const data = await response.json();
           setRecipes(data);
         } else {
-          console.log("Could not fetch recipes!");
+          console.log("Could not fetch recipes at start!");
         }
       } catch (e) {
         console.error("An error occurred during the request:", e);
         console.log("An unexpected error occurred. Please try again later.");
       }
-    }
+    };
     fetchAllRecipes();
   }, []);
+
+  const handleNewRecipe = async (e, newFormRecipe) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("/api/recipes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newFormRecipe),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        setRecipes([...recipes, data.recipe]);
+
+        console.log("Recipe added successfully!");
+
+        setShowNewRecipeForm(false);
+        setNewRecipe({
+          title: "",
+          ingredients: "",
+          instructions: "",
+          servings: 1,
+          description: "",
+          image_url:
+            "https://images.pexels.com/photos/9986228/pexels-photo-9986228.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+        });
+      } else {
+        console.log("Could not fetch recipes!");
+      }
+    } catch (error) {
+      console.error("An error occurred during the request:", error);
+      console.log("An unexpected error occurred. Please try again later.");
+    }
+  };
 
   const handleSelectRecipe = (recipe) => {
     setSelectedRecipe(recipe);
@@ -63,16 +100,14 @@ function App() {
   return (
     <div className="recipe-app">
       <Header showRecipeForm={showRecipeForm} />
-      {showNewRecipeForm && (
+      {showNewRecipeForm ? (
         <NewRecipeForm
           newRecipe={newRecipe}
           hideRecipeForm={hideRecipeForm}
-          onUpdateForm={(e) => {
-            onUpdateForm(e);
-          }}
+          onUpdateForm={onUpdateForm}
+          handleNewRecipe={handleNewRecipe}
         />
-      )}
-      {selectedRecipe ? (
+      ) : selectedRecipe ? (
         <RecipeFull
           selectedRecipe={selectedRecipe}
           handleUnselectRecipe={handleUnselectRecipe}

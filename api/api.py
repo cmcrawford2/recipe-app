@@ -43,10 +43,12 @@ def get_all_recipes():
 
 def add_recipe():
     data = request.get_json()
+    
     required_fields = ['title', 'ingredients', 'instructions', 'servings', 'description', 'image_url']
     for field in required_fields:
         if field not in data or data[field] == "":
             return jsonify({'error': f"Missing required field: '{field}'"}), 400
+
     new_recipe = Recipe(
         title=data['title'],
         ingredients=data['ingredients'],

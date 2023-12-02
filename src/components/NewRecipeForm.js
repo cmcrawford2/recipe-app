@@ -1,6 +1,6 @@
 import React from "react";
 const NewRecipeForm = (props) => {
-  const { newRecipe, hideRecipeForm, onUpdateForm } = props;
+  const { newRecipe, hideRecipeForm, onUpdateForm, handleNewRecipe } = props;
   return (
     <div className="recipe-details">
       <div className="recipe-form">
@@ -9,7 +9,7 @@ const NewRecipeForm = (props) => {
           Cancel
         </button>
 
-        <form>
+        <form onSubmit={(e) => handleNewRecipe(e, newRecipe)}>
           <label>Title</label>
           <input
             type="text"
@@ -70,9 +70,3 @@ const NewRecipeForm = (props) => {
 };
 
 export default NewRecipeForm;
-
-/*
-
-Let’s take it out for a spin! Pass the onUpdateForm function to the NewRecipeForm component. In NewRecipeForm.js, destructure the onUpdateForm. In each of the inputs and text areas, make sure to provide a value that matches the corresponding state (for example value={newRecipe.ingredients} for the ‘ingredients’ textarea, and an accompanying onChange function – i.e. onChange={(e) => onUpdateForm(e)}. The great thing about our versatile onUpdateForm function is that you can pass the exact same onChange for each of your form fields – it’s just the value that changes.
-Try pressing on the ‘New Recipe’ button in the browser – you should be able to enter all of the values. When you click on ‘Save’ – nothing much will happen right now (aside from a page refresh) – but we’ll address this behavior next!
-*/
