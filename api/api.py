@@ -116,7 +116,6 @@ def delete_recipe(recipe_id):
     if not recipe:
         return jsonify({'error': 'Recipe not found'}), 404
 
-    data = request.get_json()
     db.session.delete(recipe)
     db.session.commit()
     return jsonify({'message': 'Recipe deleted successfully'})

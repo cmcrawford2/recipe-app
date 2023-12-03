@@ -75,6 +75,64 @@ function App() {
     }
   };
 
+  const handleUpdateRecipe = async (e, selectedRecipe) => {
+    e.preventDefault();
+
+    const { id } = selectedRecipe;
+
+    try {
+      const response = await fetch(`/api/recipes/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedRecipe),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        setRecipes(
+          recipes.map((recipe) => {
+            if (recipe.id === id) return data.recipe;
+            else return recipe;
+          })
+        );
+
+        console.log("Recipe updated successfully!");
+
+        setSelectedRecipe(null);
+      } else {
+        console.log("Could not fetch recipes!");
+      }
+    } catch (error) {
+      console.error("An error occurred during the request:", error);
+      console.log("An unexpected error occurred. Please try again later.");
+    }
+  };
+
+  const handleDeleteRecipe = async (recipeId) => {
+    try {
+      console.log(recipeId, selectedRecipe.id);
+      const response = await fetch(`/api/recipes/${selectedRecipe.id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setRecipes(recipes.filter((recipe) => recipe.id !== recipeId));
+
+        console.log("Recipe deleted successfully!");
+
+        setSelectedRecipe(null);
+      } else {
+        console.log("Could not fetch recipes!");
+      }
+    } catch (error) {
+      console.error("An error occured during the request:", error);
+      console.log("An unexpected error occurred. Please try again later.");
+    }
+  };
+
   const handleSelectRecipe = (recipe) => {
     setSelectedRecipe(recipe);
   };
@@ -92,9 +150,14 @@ function App() {
     setSelectedRecipe(null);
   };
 
-  const onUpdateForm = (e) => {
+  const onUpdateForm = (e, action = "new") => {
     const { name, value } = e.target;
-    setNewRecipe({ ...newRecipe, [name]: value });
+    if (action === "new") {
+      setNewRecipe({ ...newRecipe, [name]: value });
+    } else {
+      // action === "update"
+      setSelectedRecipe({ ...selectedRecipe, [name]: value });
+    }
   };
 
   return (
@@ -111,6 +174,9 @@ function App() {
         <RecipeFull
           selectedRecipe={selectedRecipe}
           handleUnselectRecipe={handleUnselectRecipe}
+          onUpdateForm={onUpdateForm}
+          handleUpdateRecipe={handleUpdateRecipe}
+          handleDeleteRecipe={handleDeleteRecipe}
         />
       ) : (
         <div className="recipe-list">
