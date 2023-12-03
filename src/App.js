@@ -3,13 +3,17 @@ import Header from "./components/Header";
 import RecipeExcerpt from "./components/RecipeExcerpt";
 import RecipeFull from "./components/RecipeFull";
 import NewRecipeForm from "./components/NewRecipeForm";
+import displayToast from "./helpers/toastHelper";
+import { ToastContainer } from "react-toastify";
 
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
 function App() {
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [showNewRecipeForm, setShowNewRecipeForm] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [newRecipe, setNewRecipe] = useState({
     title: "",
     ingredients: "",
@@ -28,11 +32,14 @@ function App() {
           const data = await response.json();
           setRecipes(data);
         } else {
-          console.log("Could not fetch recipes at start!");
+          displayToast("Could not fetch recipes!", "error");
         }
       } catch (e) {
         console.error("An error occurred during the request:", e);
-        console.log("An unexpected error occurred. Please try again later.");
+        displayToast(
+          "An unexpected error occurred. Please try again later.",
+          "error"
+        );
       }
     };
     fetchAllRecipes();
@@ -54,7 +61,7 @@ function App() {
 
         setRecipes([...recipes, data.recipe]);
 
-        console.log("Recipe added successfully!");
+        displayToast("Recipe added successfully!", "success");
 
         setShowNewRecipeForm(false);
         setNewRecipe({
@@ -67,11 +74,14 @@ function App() {
             "https://images.pexels.com/photos/9986228/pexels-photo-9986228.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
         });
       } else {
-        console.log("Could not fetch recipes!");
+        displayToast("Could not fetch recipes!", "error");
       }
     } catch (error) {
       console.error("An error occurred during the request:", error);
-      console.log("An unexpected error occurred. Please try again later.");
+      displayToast(
+        "An unexpected error occurred. Please try again later.",
+        "error"
+      );
     }
   };
 
@@ -99,15 +109,18 @@ function App() {
           })
         );
 
-        console.log("Recipe updated successfully!");
+        displayToast("Recipe updated successfully!", "success");
 
         setSelectedRecipe(null);
       } else {
-        console.log("Could not fetch recipes!");
+        displayToast("Could not fetch recipes!", "error");
       }
     } catch (error) {
       console.error("An error occurred during the request:", error);
-      console.log("An unexpected error occurred. Please try again later.");
+      displayToast(
+        "An unexpected error occurred. Please try again later.",
+        "error"
+      );
     }
   };
 
@@ -121,16 +134,36 @@ function App() {
       if (response.ok) {
         setRecipes(recipes.filter((recipe) => recipe.id !== recipeId));
 
-        console.log("Recipe deleted successfully!");
+        displayToast("Recipe deleted successfully!", "success");
 
         setSelectedRecipe(null);
       } else {
-        console.log("Could not fetch recipes!");
+        displayToast("Could not fetch recipes!", "error");
       }
     } catch (error) {
       console.error("An error occured during the request:", error);
-      console.log("An unexpected error occurred. Please try again later.");
+      displayToast(
+        "An unexpected error occurred. Please try again later.",
+        "error"
+      );
     }
+  };
+
+  const handleSearch = () => {
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    const searchResults = recipes.filter((recipe) => {
+      const splitIngredients = [...recipe.ingredients.split(",")].join();
+      const valuesToSearch = [
+        ...recipe.title.split(" "),
+        ...recipe.description.split(" "),
+        ...splitIngredients.split(" "),
+      ];
+      const result = valuesToSearch.some(
+        (value) => value.toLowerCase() === lowerCaseSearchTerm
+      );
+      return result;
+    });
+    return searchResults;
   };
 
   const handleSelectRecipe = (recipe) => {
@@ -160,9 +193,26 @@ function App() {
     }
   };
 
+  const updateSearchTerm = (text) => {
+    setSearchTerm(text);
+  };
+
+  const displayAllRecipes = () => {
+    setSearchTerm("");
+    setSelectedRecipe(null);
+    setShowNewRecipeForm(false);
+  };
+
+  const displayedRecipes = searchTerm ? handleSearch() : recipes;
+
   return (
     <div className="recipe-app">
-      <Header showRecipeForm={showRecipeForm} />
+      <Header
+        showRecipeForm={showRecipeForm}
+        searchTerm={searchTerm}
+        updateSearchTerm={updateSearchTerm}
+        displayAllRecipes={displayAllRecipes}
+      />
       {showNewRecipeForm ? (
         <NewRecipeForm
           newRecipe={newRecipe}
@@ -180,7 +230,7 @@ function App() {
         />
       ) : (
         <div className="recipe-list">
-          {recipes.map((recipe) => {
+          {displayedRecipes.map((recipe) => {
             return (
               <RecipeExcerpt
                 key={recipe.id}
@@ -191,6 +241,7 @@ function App() {
           })}
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 }
