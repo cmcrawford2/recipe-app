@@ -104,7 +104,7 @@ def update_recipe(recipe_id):
         'instructions': recipe.instructions,
         'servings': recipe.servings,
         'description': recipe.description,
-        'image_urlr': recipe.image_url
+        'image_url': recipe.image_url
     }
     return jsonify({'message': 'Recipe updated successfully', 'recipe': updated_recipe})
  
