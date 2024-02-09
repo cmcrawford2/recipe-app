@@ -27,7 +27,9 @@ function App() {
   useEffect(() => {
     const fetchAllRecipes = async () => {
       try {
-        const response = await fetch("/api/recipes");
+        const response = await fetch(
+          "https://criscrawford.pythonanywhere.com/api/recipes"
+        );
         if (response.ok) {
           const data = await response.json();
           setRecipes(data);
@@ -48,13 +50,16 @@ function App() {
   const handleNewRecipe = async (e, newFormRecipe) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/recipes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newFormRecipe),
-      });
+      const response = await fetch(
+        "https://criscrawford.pythonanywhere.com/api/recipes",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newFormRecipe),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -91,13 +96,16 @@ function App() {
     const { id } = selectedRecipe;
 
     try {
-      const response = await fetch(`/api/recipes/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(selectedRecipe),
-      });
+      const response = await fetch(
+        `https://criscrawford.pythonanywhere.com/api/recipes/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(selectedRecipe),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -127,9 +135,12 @@ function App() {
   const handleDeleteRecipe = async (recipeId) => {
     try {
       console.log(recipeId, selectedRecipe.id);
-      const response = await fetch(`/api/recipes/${selectedRecipe.id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `https://criscrawford.pythonanywhere.com/api/recipes/${selectedRecipe.id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (response.ok) {
         setRecipes(recipes.filter((recipe) => recipe.id !== recipeId));
