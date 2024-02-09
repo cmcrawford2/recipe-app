@@ -1,5 +1,5 @@
 {
-  "name": "react-flast-app",
+  "name": "react-flask-app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -41,5 +41,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://127.0.0.1:5000"
+  "proxy": "https://criscrawford.pythonanywhere.com"
 }
