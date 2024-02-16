@@ -163,11 +163,12 @@ function App() {
   const handleSearch = () => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
     const searchResults = recipes.filter((recipe) => {
-      const splitIngredients = [...recipe.ingredients.split(",")].join();
       const valuesToSearch = [
         ...recipe.title.split(" "),
         ...recipe.description.split(" "),
-        ...splitIngredients.split(" "),
+        ...recipe.ingredients
+          .split(",")
+          .flatMap((ingredient) => ingredient.trim().split(" ")),
       ];
       const result = valuesToSearch.some(
         (value) => value.toLowerCase() === lowerCaseSearchTerm
