@@ -170,8 +170,8 @@ function App() {
           .split(",")
           .flatMap((ingredient) => ingredient.trim().split(" ")),
       ];
-      const result = valuesToSearch.some(
-        (value) => value.toLowerCase() === lowerCaseSearchTerm
+      const result = valuesToSearch.some((value) =>
+        value.toLowerCase().includes(lowerCaseSearchTerm)
       );
       return result;
     });
